@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CricketHub</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#0f172a;color:#e2e8f0;font-size:14px;min-height:100vh;padding:0}
+.app{max-width:680px;margin:0 auto;padding:16px}
+
+.hero{background:linear-gradient(135deg,#0a1628 0%,#1a2f55 60%,#0f3d2e 100%);padding:1.8rem 1.5rem 1.4rem;border-radius:16px;margin-bottom:1.2rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.025);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-50px;left:-20px;width:140px;height:140px;border-radius:50%;background:rgba(34,197,94,0.05);pointer-events:none}
+.hero-logo{font-family:'Bebas Neue',sans-serif;font-size:40px;color:#fff;letter-spacing:3px;line-height:1;cursor:pointer;display:inline-block}
+.hero-logo span{color:#22c55e}
+.hero-sub{font-size:11px;color:rgba(255,255,255,0.45);letter-spacing:2px;text-transform:uppercase;margin-top:3px;cursor:pointer;display:inline-block}
+.hero-edit-hint{font-size:10px;color:rgba(255,255,255,0.25);margin-top:6px;letter-spacing:1px}
+.title-edit-wrap{margin-bottom:4px}
+.title-input{background:rgba(255,255,255,0.08);border:1px solid #22c55e;border-radius:8px;padding:4px 10px;font-family:'Bebas Neue',sans-serif;font-size:38px;color:#fff;letter-spacing:3px;outline:none;width:100%}
+.title-input::placeholder{color:rgba(255,255,255,0.3)}
+.sub-input{background:rgba(255,255,255,0.08);border:1px solid rgba(34,197,94,0.5);border-radius:6px;padding:4px 10px;font-size:11px;color:rgba(255,255,255,0.7);letter-spacing:2px;outline:none;width:100%;text-transform:uppercase}
+.sub-input::placeholder{color:rgba(255,255,255,0.2)}
+.title-save-btn{background:#22c55e;color:#000;border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:500;cursor:pointer;margin-top:8px}
+.title-save-btn:hover{background:#16a34a}
+
+.nav-pills{display:flex;gap:7px;margin-top:1.2rem;flex-wrap:wrap}
+.pill{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500;border:1.5px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.65);cursor:pointer;transition:all 0.2s;background:transparent}
+.pill.active,.pill:hover{background:#22c55e;border-color:#22c55e;color:#000}
+
+.tab-content{display:none}.tab-content.active{display:block}
+.section-label{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#64748b;margin-bottom:10px}
+.row-between{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+
+.card{background:#1e293b;border:0.5px solid #334155;border-radius:12px;padding:14px;margin-bottom:10px;transition:border-color 0.2s}
+.card:hover{border-color:#475569}
+.match-tournament{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;font-weight:500}
+.match-teams{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.team-name{font-size:14px;font-weight:500;color:#e2e8f0}
+.team-score{font-family:'Bebas Neue',sans-serif;font-size:24px;color:#e2e8f0;letter-spacing:1px;line-height:1.1}
+.team-score.winner{color:#22c55e}
+.vs{font-size:11px;color:#475569;text-align:center;padding:0 6px}
+.result-badge{font-size:11px;margin-top:7px;padding:4px 9px;border-radius:6px;display:inline-block;font-weight:500}
+.rb-final{background:#052e16;color:#4ade80}
+.rb-sched{background:#1e293b;color:#64748b;border:0.5px solid #334155}
+.time-b{font-size:10px;color:#475569;float:right;margin-top:7px}
+.del-btn{font-size:11px;color:#475569;cursor:pointer;background:none;border:0.5px solid #334155;padding:3px 8px;border-radius:5px}
+.del-btn:hover{background:#7f1d1d;color:#fca5a5;border-color:#991b1b}
+.edit-action-btn{font-size:11px;color:#475569;cursor:pointer;background:none;border:0.5px solid #334155;padding:3px 8px;border-radius:5px}
+.edit-action-btn:hover{background:#1e3a5f;color:#93c5fd;border-color:#1d4ed8}
+
+.t-card{background:#1e293b;border:0.5px solid #334155;border-radius:12px;padding:14px;margin-bottom:10px}
+.t-name{font-size:15px;font-weight:500;color:#e2e8f0;margin-bottom:3px}
+.t-meta{font-size:12px;color:#64748b}
+.t-badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:500;margin-top:7px}
+.bt20{background:#2e1065;color:#c4b5fd}
+.bodi{background:#1e3a5f;color:#93c5fd}
+.btest{background:#4a044e;color:#f0abfc}
+.blist{background:#052e16;color:#86efac}
+
+.add-btn{background:#22c55e;color:#000;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:5px}
+.add-btn:hover{background:#16a34a}
+
+.player-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px;margin-bottom:1.2rem}
+.player-card{background:#1e293b;border:0.5px solid #334155;border-radius:12px;padding:12px 10px;text-align:center;position:relative;cursor:pointer;transition:border-color 0.2s}
+.player-card:hover{border-color:#22c55e}
+.p-photo{width:66px;height:66px;border-radius:50%;margin:0 auto 8px;overflow:hidden;background:#0f172a;display:flex;align-items:center;justify-content:center;border:2px solid #334155}
+.p-photo img{width:100%;height:100%;object-fit:cover}
+.p-initials{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#475569}
+.p-name{font-size:12px;font-weight:500;color:#e2e8f0;margin-bottom:2px;line-height:1.3}
+.p-country{font-size:10px;color:#64748b}
+.role-badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:9px;font-weight:500;margin-top:5px}
+.rb-bat{background:#1e3a5f;color:#93c5fd}
+.rb-bowl{background:#4a044e;color:#f0abfc}
+.rb-all{background:#052e16;color:#86efac}
+.rb-wk{background:#431407;color:#fdba74}
+.p-del{position:absolute;top:5px;right:5px;width:18px;height:18px;border-radius:50%;background:#0f172a;border:0.5px solid #334155;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:11px;color:#64748b;line-height:1}
+.player-card:hover .p-del{display:flex}
+.p-del:hover{background:#7f1d1d;color:#fca5a5}
+
+.award-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.2rem}
+.award-card{background:#1e293b;border:0.5px solid #334155;border-radius:12px;padding:14px;text-align:center}
+.award-title{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#64748b;margin-bottom:8px}
+.award-photo{width:60px;height:60px;border-radius:50%;margin:0 auto 8px;overflow:hidden;background:#0f172a;display:flex;align-items:center;justify-content:center}
+.award-photo img{width:100%;height:100%;object-fit:cover}
+.award-name{font-size:14px;font-weight:500;color:#e2e8f0;margin-bottom:2px}
+.award-sub{font-size:11px;color:#64748b}
+.award-empty{font-size:12px;color:#475569;padding:8px 0}
+.award-set-btn{font-size:11px;color:#22c55e;cursor:pointer;background:none;border:none;padding:4px 0;font-weight:500;margin-top:4px;display:inline-block}
+.award-set-btn:hover{text-decoration:underline}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.modal-overlay.open{display:flex}
+.modal{background:#1e293b;border-radius:16px;border:0.5px solid #475569;padding:20px;width:100%;max-width:400px;margin:auto}
+.modal-title{font-size:15px;font-weight:500;color:#e2e8f0;margin-bottom:16px}
+.fg{margin-bottom:11px}
+.fg label{font-size:11px;color:#64748b;margin-bottom:4px;display:block}
+.fg input,.fg select{width:100%;padding:8px 10px;border-radius:7px;border:0.5px solid #475569;background:#0f172a;color:#e2e8f0;font-size:13px;font-family:'DM Sans',sans-serif;outline:none}
+.fg input:focus,.fg select:focus{border-color:#22c55e}
+.fg select option{background:#1e293b}
+.stats-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.photo-up{border:1.5px dashed #475569;border-radius:10px;padding:14px;text-align:center;cursor:pointer;margin-bottom:12px;transition:border-color 0.2s}
+.photo-up:hover{border-color:#22c55e}
+.photo-prev{width:64px;height:64px;border-radius:50%;margin:0 auto 6px;overflow:hidden;background:#0f172a;display:flex;align-items:center;justify-content:center}
+.photo-prev img{width:100%;height:100%;object-fit:cover}
+.up-text{font-size:12px;color:#64748b}
+.up-hint{font-size:10px;color:#334155;margin-top:2px}
+.modal-actions{display:flex;gap:8px;margin-top:16px}
+.btn-cancel{flex:1;padding:8px;border-radius:8px;border:0.5px solid #475569;background:transparent;font-size:13px;color:#94a3b8;cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-save{flex:1;padding:8px;border-radius:8px;border:none;background:#22c55e;font-size:13px;font-weight:500;color:#000;cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-cancel:hover{background:#334155}
+.btn-save:hover{background:#16a34a}
+.divider{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#64748b;margin:14px 0 8px;border-top:0.5px solid #334155;padding-top:12px}
+
+.empty-state{text-align:center;padding:32px 16px;color:#64748b}
+.empty-text{font-size:13px;font-weight:500;color:#94a3b8;margin-bottom:3px}
+.empty-sub{font-size:12px;color:#64748b}
+
+.stats-grid-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.sc{background:#0f172a;border-radius:8px;padding:10px 8px;text-align:center}
+.sc-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:#e2e8f0;line-height:1}
+.sc-key{font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+
+.award-picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;max-height:250px;overflow-y:auto;padding:4px 0}
+.award-picker-card{border:0.5px solid #334155;border-radius:8px;padding:8px;text-align:center;cursor:pointer;transition:border-color 0.2s;background:#0f172a}
+.award-picker-card:hover{border-color:#22c55e}
+.award-picker-card.sel{border:2px solid #22c55e}
+.award-picker-photo{width:44px;height:44px;border-radius:50%;margin:0 auto 5px;overflow:hidden;background:#1e293b;display:flex;align-items:center;justify-content:center}
+.award-picker-photo img{width:100%;height:100%;object-fit:cover}
+.award-picker-name{font-size:11px;font-weight:500;color:#e2e8f0}
+
+.player-detail-wrap{padding:0}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:#0f172a}
+::-webkit-scrollbar-thumb{background:#334155;border-radius:2px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="hero">
+  <div id="titleDisplay">
+    <div class="hero-logo" id="heroLogo" onclick="toggleTitleEdit()" title="Click to edit"></div>
+    <div class="hero-sub" id="heroSub" onclick="toggleTitleEdit()" title="Click to edit"></div>
+    <div class="hero-edit-hint">click title to edit</div>
+  </div>
+  <div id="titleEditForm" style="display:none">
+    <div class="title-edit-wrap">
+      <input class="title-input" id="titleInput" placeholder="CRICKETHUB" maxlength="20">
+    </div>
+    <input class="sub-input" id="subInput" placeholder="Your personal cricket universe" maxlength="60">
+    <div><button class="title-save-btn" onclick="saveTitle()">Save title</button></div>
+  </div>
+  <div class="nav-pills">
+    <div class="pill active" onclick="switchTab('scores',this)">Scores</div>
+    <div class="pill" onclick="switchTab('upcoming',this)">Upcoming</div>
+    <div class="pill" onclick="switchTab('tournaments',this)">Tournaments</div>
+    <div class="pill" onclick="switchTab('players',this)">Players</div>
+    <div class="pill" onclick="switchTab('awards',this)">Awards</div>
+  </div>
+</div>
+
+<div id="scores" class="tab-content active">
+  <div class="row-between"><div class="section-label" style="margin-bottom:0">Results</div><button class="add-btn" onclick="openMatchModal()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="#000" stroke-width="1.8" stroke-linecap="round"/></svg>Add match</button></div>
+  <div id="matchList"></div>
+</div>
+
+<div id="upcoming" class="tab-content">
+  <div class="row-between"><div class="section-label" style="margin-bottom:0">Fixtures</div><button class="add-btn" onclick="openUpcomingModal()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="#000" stroke-width="1.8" stroke-linecap="round"/></svg>Add fixture</button></div>
+  <div id="upcomingList"></div>
+</div>
+
+<div id="tournaments" class="tab-content">
+  <div class="row-between"><div class="section-label" style="margin-bottom:0">Tournaments</div><button class="add-btn" onclick="openTournamentModal()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="#000" stroke-width="1.8" stroke-linecap="round"/></svg>Add</button></div>
+  <div id="tournamentList"></div>
+</div>
+
+<div id="players" class="tab-content">
+  <div class="row-between"><div class="section-label" style="margin-bottom:0">My squad</div><button class="add-btn" onclick="openPlayerModal()"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="#000" stroke-width="1.8" stroke-linecap="round"/></svg>Add player</button></div>
+  <div class="player-grid" id="playerGrid"></div>
+  <div id="playerEmpty" class="empty-state"><div class="empty-text">No players yet</div><div class="empty-sub">Add your first player above</div></div>
+</div>
+
+<div id="awards" class="tab-content">
+  <div class="section-label">Honour board</div>
+  <div class="award-grid">
+    <div class="award-card">
+      <div style="margin-bottom:6px"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M13 2l2.6 8H24l-6.8 4.9 2.6 8L13 18.1l-6.8 4.8 2.6-8L2 10h8.4L13 2z" fill="#f59e0b"/></svg></div>
+      <div class="award-title">Man of the match</div>
+      <div id="motmContent"></div>
+    </div>
+    <div class="award-card">
+      <div style="margin-bottom:6px"><svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M13 2l2.6 8H24l-6.8 4.9 2.6 8L13 18.1l-6.8 4.8 2.6-8L2 10h8.4L13 2z" fill="#22c55e"/></svg></div>
+      <div class="award-title">Man of the series</div>
+      <div id="motsContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Match modal -->
+<div class="modal-overlay" id="matchModal">
+<div class="modal">
+  <div class="modal-title" id="matchModalTitle">Add match</div>
+  <div class="fg"><label>Tournament / series</label><input id="mTournament" placeholder="e.g. IPL 2026"></div>
+  <div class="stats-grid-2">
+    <div class="fg"><label>Team 1</label><input id="mTeam1" placeholder="India"></div>
+    <div class="fg"><label>Team 2</label><input id="mTeam2" placeholder="Australia"></div>
+  </div>
+  <div class="stats-grid-2">
+    <div class="fg"><label>Team 1 score</label><input id="mScore1" placeholder="185/4"></div>
+    <div class="fg"><label>Team 2 score</label><input id="mScore2" placeholder="172/8"></div>
+  </div>
+  <div class="fg"><label>Result</label><input id="mResult" placeholder="India won by 13 runs"></div>
+  <div class="fg"><label>Winner (exact team name)</label><input id="mWinner" placeholder="India"></div>
+  <div class="fg"><label>Date & time</label><input id="mTime" placeholder="Mon Mar 17, 7:30 PM IST"></div>
+  <div class="modal-actions"><button class="btn-cancel" onclick="closeModal('matchModal')">Cancel</button><button class="btn-save" onclick="saveMatch()">Save</button></div>
+</div></div>
+
+<!-- Upcoming modal -->
+<div class="modal-overlay" id="upcomingModal">
+<div class="modal">
+  <div class="modal-title">Add upcoming fixture</div>
+  <div class="fg"><label>Tournament</label><input id="uTournament" placeholder="e.g. World Cup 2026"></div>
+  <div class="stats-grid-2">
+    <div class="fg"><label>Team 1</label><input id="uTeam1" placeholder="India"></div>
+    <div class="fg"><label>Team 2</label><input id="uTeam2" placeholder="England"></div>
+  </div>
+  <div class="fg"><label>Date & time</label><input id="uTime" placeholder="Fri Mar 20, 3:00 PM IST"></div>
+  <div class="modal-actions"><button class="btn-cancel" onclick="closeModal('upcomingModal')">Cancel</button><button class="btn-save" onclick="saveUpcoming()">Save</button></div>
+</div></div>
+
+<!-- Tournament modal -->
+<div class="modal-overlay" id="tournamentModal">
+<div class="modal">
+  <div class="modal-title" id="tournamentModalTitle">Add tournament</div>
+  <div class="fg"><label>Tournament name</label><input id="tName" placeholder="IPL 2026"></div>
+  <div class="fg"><label>Description / teams info</label><input id="tMeta" placeholder="8 teams · India domestic"></div>
+  <div class="fg"><label>Format</label>
+    <select id="tFormat"><option value="t20">T20</option><option value="odi">ODI</option><option value="test">Test</option><option value="list">List-A / First-Class</option></select>
+  </div>
+  <div class="modal-actions"><button class="btn-cancel" onclick="closeModal('tournamentModal')">Cancel</button><button class="btn-save" onclick="saveTournament()">Save</button></div>
+</div></div>
+
+<!-- Player modal -->
+<div class="modal-overlay" id="playerModal">
+<div class="modal">
+  <div class="modal-title" id="playerModalTitle">Add player</div>
+  <div class="photo-up" onclick="document.getElementById('photoInput').click()">
+    <div class="photo-prev" id="photoPreview">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="10" r="5" stroke="#475569" stroke-width="1.5"/><path d="M4 26c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </div>
+    <div class="up-text">Tap to upload photo</div>
+    <div class="up-hint">JPG, PNG</div>
+  </div>
+  <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handlePhoto(this)">
+  <div class="stats-grid-2">
+    <div class="fg"><label>Player name</label><input id="pName" placeholder="Virat Kohli"></div>
+    <div class="fg"><label>Country / state</label><input id="pCountry" placeholder="India"></div>
+  </div>
+  <div class="stats-grid-2">
+    <div class="fg"><label>Place / city</label><input id="pPlace" placeholder="Delhi"></div>
+    <div class="fg"><label>Role</label>
+      <select id="pRole"><option value="bat">Batsman</option><option value="bowl">Bowler</option><option value="all">All-rounder</option><option value="wk">Wicketkeeper</option></select>
+    </div>
+  </div>
+  <div class="divider">Batting stats</div>
+  <div class="stats-grid-2">
+    <div class="fg"><label>Runs scored</label><input id="pRuns" type="number" placeholder="0"></div>
+    <div class="fg"><label>Strike rate</label><input id="pSR" type="number" step="0.01" placeholder="0.00"></div>
+  </div>
+  <div class="stats-grid-2">
+    <div class="fg"><label>Fours (4s)</label><input id="pFours" type="number" placeholder="0"></div>
+    <div class="fg"><label>Sixes (6s)</label><input id="pSixes" type="number" placeholder="0"></div>
+  </div>
+  <div class="stats-grid-2">
+    <div class="fg"><label>Dot balls faced</label><input id="pDots" type="number" placeholder="0"></div>
+    <div class="fg"><label>Catches</label><input id="pCatches" type="number" placeholder="0"></div>
+  </div>
+  <div class="fg"><label>Run outs</label><input id="pRunOuts" type="number" placeholder="0"></div>
+  <div class="divider">Bowling stats</div>
+  <div class="stats-grid-2">
+    <div class="fg"><label>Wickets</label><input id="pWickets" type="number" placeholder="0"></div>
+    <div class="fg"><label>Overs bowled</label><input id="pOvers" type="number" step="0.1" placeholder="0.0"></div>
+  </div>
+  <div class="fg"><label>Economy rate</label><input id="pEconomy" type="number" step="0.01" placeholder="0.00"></div>
+  <div class="modal-actions"><button class="btn-cancel" onclick="closeModal('playerModal')">Cancel</button><button class="btn-save" onclick="savePlayer()">Save player</button></div>
+</div></div>
+
+<!-- Player detail modal -->
+<div class="modal-overlay" id="playerDetailModal">
+<div class="modal">
+  <div id="playerDetailContent"></div>
+  <div class="modal-actions" style="margin-top:14px">
+    <button class="btn-cancel" onclick="closeModal('playerDetailModal')">Close</button>
+    <button class="btn-save" onclick="editCurrentPlayer()">Edit player</button>
+  </div>
+</div></div>
+
+<!-- Award picker modal -->
+<div class="modal-overlay" id="awardPickerModal">
+<div class="modal">
+  <div class="modal-title" id="awardPickerTitle">Select player</div>
+  <div class="award-picker-grid" id="awardPickerGrid"></div>
+  <div class="modal-actions"><button class="btn-cancel" onclick="closeModal('awardPickerModal')">Cancel</button></div>
+</div></div>
+
+<script>
+var state={
+  title:'CRICKETHUB',
+  subtitle:'Your personal cricket universe',
+  matches:[
+    {id:1,tournament:"T20 Series — NZ vs SA 2026",team1:"New Zealand",team2:"South Africa",score1:"175/6",score2:"107/10",result:"NZ won by 68 runs",winner:"New Zealand",time:"Today, 11:45 AM IST"},
+    {id:2,tournament:"ODI Series — Bangladesh vs Pakistan 2026",team1:"Bangladesh",team2:"Pakistan",score1:"290/5",score2:"279/10",result:"Bangladesh won by 11 runs",winner:"Bangladesh",time:"Sun Mar 15, 1:45 PM IST"}
+  ],
+  upcoming:[
+    {id:1,tournament:"National T20 Cup 2026",team1:"Karachi Region Whites",team2:"Sialkot Region",time:"Today, 5:00 PM IST"},
+    {id:2,tournament:"Plunket Shield",team1:"Wellington Firebirds",team2:"Auckland Aces",time:"Wed Mar 18, 3:00 AM IST"}
+  ],
+  tournaments:[
+    {id:1,name:"T20 World Cup Sub Regional Americas Qualifier B",meta:"ICC Qualifier · Americas",format:"t20"},
+    {id:2,name:"ODI Series — Bangladesh vs Pakistan 2026",meta:"International · Ongoing",format:"odi"},
+    {id:3,name:"Legends Cricket League 2026",meta:"Franchise · Multi-city",format:"t20"},
+    {id:4,name:"National T20 Cup 2026",meta:"Pakistan domestic · Regional teams",format:"t20"},
+    {id:5,name:"Plunket Shield",meta:"New Zealand domestic · First-class",format:"list"}
+  ],
+  players:[],motm:null,mots:null
+};
+var editingId=null,currentPhoto=null,currentAwardType=null,nextId=200;
+var roleLabels={bat:"Batsman",bowl:"Bowler",all:"All-rounder",wk:"Wicketkeeper"};
+var roleClasses={bat:"rb-bat",bowl:"rb-bowl",all:"rb-all",wk:"rb-wk"};
+var fmtLabels={t20:"T20",odi:"ODI",test:"Test",list:"List-A"};
+var fmtClasses={t20:"bt20",odi:"bodi",test:"btest",list:"blist"};
+
+function init(){
+  var saved=localStorage.getItem('crickethub_state');
+  if(saved){try{state=JSON.parse(saved)}catch(e){}}
+  renderTitle();renderMatches();renderUpcoming();renderTournaments();renderPlayers();renderAwards();
+}
+
+function save(){localStorage.setItem('crickethub_state',JSON.stringify(state))}
+
+function switchTab(id,el){
+  document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active')});
+  document.querySelectorAll('.pill').forEach(function(p){p.classList.remove('active')});
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+function openModal(id){document.getElementById(id).classList.add('open')}
+
+function getInitials(name){return name.split(' ').map(function(w){return w[0]||''}).join('').slice(0,2).toUpperCase()}
+
+function renderTitle(){
+  var logoEl=document.getElementById('heroLogo');
+  var subEl=document.getElementById('heroSub');
+  var parts=state.title.split(/([A-Z]+)/g).filter(Boolean);
+  var html='';
+  if(parts.length>=2){
+    html=parts[0]+'<span>'+parts.slice(1).join('')+'</span>';
+  } else {
+    html=state.title;
+  }
+  logoEl.innerHTML=html;
+  subEl.textContent=state.subtitle;
+  document.title=state.title||'CricketHub';
+}
+
+function toggleTitleEdit(){
+  var disp=document.getElementById('titleDisplay');
+  var form=document.getElementById('titleEditForm');
+  if(form.style.display==='none'){
+    document.getElementById('titleInput').value=state.title;
+    document.getElementById('subInput').value=state.subtitle;
+    disp.style.display='none';form.style.display='block';
+    document.getElementById('titleInput').focus();
+  } else {
+    form.style.display='none';disp.style.display='block';
+  }
+}
+
+function saveTitle(){
+  var t=document.getElementById('titleInput').value.trim();
+  var s=document.getElementById('subInput').value.trim();
+  if(t) state.title=t.toUpperCase();
+  if(s) state.subtitle=s;
+  document.getElementById('titleEditForm').style.display='none';
+  document.getElementById('titleDisplay').style.display='block';
+  renderTitle();save();
+}
+
+function renderMatches(){
+  var el=document.getElementById('matchList');
+  if(!state.matches.length){el.innerHTML='<div class="empty-state"><div class="empty-text">No match results yet</div><div class="empty-sub">Add your first match</div></div>';return}
+  el.innerHTML=state.matches.map(function(m){
+    var s1c=m.winner===m.team1?' winner':'';
+    var s2c=m.winner===m.team2?' winner':'';
+    return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div class="match-tournament">'+m.tournament+'</div><div style="display:flex;gap:5px"><button class="edit-action-btn" onclick="editMatch('+m.id+')">edit</button><button class="del-btn" onclick="deleteItem(\'matches\','+m.id+')">del</button></div></div><div class="match-teams"><div><div class="team-name">'+m.team1+'</div><div class="team-score'+s1c+'">'+m.score1+'</div></div><div class="vs">vs</div><div style="text-align:right"><div class="team-name">'+m.team2+'</div><div class="team-score'+s2c+'">'+m.score2+'</div></div></div><span class="result-badge rb-final">'+m.result+'</span><span class="time-b">'+m.time+'</span></div>'
+  }).join('');
+}
+
+function renderUpcoming(){
+  var el=document.getElementById('upcomingList');
+  if(!state.upcoming.length){el.innerHTML='<div class="empty-state"><div class="empty-text">No fixtures yet</div></div>';return}
+  el.innerHTML=state.upcoming.map(function(m){
+    return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div class="match-tournament">'+m.tournament+'</div><div style="display:flex;gap:5px"><button class="edit-action-btn" onclick="editUpcoming('+m.id+')">edit</button><button class="del-btn" onclick="deleteItem(\'upcoming\','+m.id+')">del</button></div></div><div class="match-teams"><div><div class="team-name">'+m.team1+'</div><div class="team-score" style="color:#475569;font-size:16px">—</div></div><div class="vs">vs</div><div style="text-align:right"><div class="team-name">'+m.team2+'</div><div class="team-score" style="color:#475569;font-size:16px">—</div></div></div><span class="result-badge rb-sched">Scheduled</span><span class="time-b">'+m.time+'</span></div>'
+  }).join('');
+}
+
+function renderTournaments(){
+  var el=document.getElementById('tournamentList');
+  if(!state.tournaments.length){el.innerHTML='<div class="empty-state"><div class="empty-text">No tournaments yet</div></div>';return}
+  el.innerHTML=state.tournaments.map(function(t){
+    return '<div class="t-card"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div class="t-name">'+t.name+'</div><div class="t-meta">'+t.meta+'</div><span class="t-badge '+fmtClasses[t.format]+'">'+fmtLabels[t.format]+'</span></div><div style="display:flex;gap:5px;margin-left:8px;flex-shrink:0"><button class="edit-action-btn" onclick="editTournament('+t.id+')">edit</button><button class="del-btn" onclick="deleteItem(\'tournaments\','+t.id+')">del</button></div></div></div>'
+  }).join('');
+}
+
+function renderPlayers(){
+  var grid=document.getElementById('playerGrid');
+  var empty=document.getElementById('playerEmpty');
+  if(!state.players.length){grid.innerHTML='';empty.style.display='block';return}
+  empty.style.display='none';
+  grid.innerHTML=state.players.map(function(p){
+    var ph=p.photo?'<img src="'+p.photo+'">':"<span class='p-initials'>"+getInitials(p.name)+"</span>";
+    return '<div class="player-card" onclick="viewPlayer('+p.id+')"><button class="p-del" onclick="event.stopPropagation();deleteItem(\'players\','+p.id+')">x</button><div class="p-photo">'+ph+'</div><div class="p-name">'+p.name+'</div><div class="p-country">'+p.country+(p.place?' · '+p.place:'')+'</div><span class="role-badge '+roleClasses[p.role]+'">'+roleLabels[p.role]+'</span></div>'
+  }).join('');
+}
+
+function renderAwards(){
+  function ahtml(p,color){
+    if(!p) return '<div class="award-empty">Not assigned</div>';
+    var img=p.photo?'<img src="'+p.photo+'">':"<span style='font-family:Bebas Neue,sans-serif;font-size:18px;color:#475569'>"+getInitials(p.name)+"</span>";
+    return '<div class="award-photo" style="border:2px solid '+color+'">'+img+'</div><div class="award-name">'+p.name+'</div><div class="award-sub">'+roleLabels[p.role]+' · '+p.country+'</div>';
+  }
+  var motm=state.motm?state.players.find(function(p){return p.id===state.motm}):null;
+  var mots=state.mots?state.players.find(function(p){return p.id===state.mots}):null;
+  document.getElementById('motmContent').innerHTML=ahtml(motm,'#f59e0b')+'<button class="award-set-btn" onclick="openAwardPicker(\'motm\')">'+(motm?'Change':'Assign player')+'</button>';
+  document.getElementById('motsContent').innerHTML=ahtml(mots,'#22c55e')+'<button class="award-set-btn" onclick="openAwardPicker(\'mots\')">'+(mots?'Change':'Assign player')+'</button>';
+}
+
+function deleteItem(list,id){
+  state[list]=state[list].filter(function(x){return x.id!==id});
+  if(list==='matches') renderMatches();
+  else if(list==='upcoming') renderUpcoming();
+  else if(list==='tournaments') renderTournaments();
+  else if(list==='players'){renderPlayers();renderAwards();}
+  save();
+}
+
+function openMatchModal(edit){
+  editingId=edit||null;
+  var m=edit?state.matches.find(function(x){return x.id===edit}):null;
+  document.getElementById('matchModalTitle').textContent=edit?'Edit match':'Add match';
+  document.getElementById('mTournament').value=m?m.tournament:'';
+  document.getElementById('mTeam1').value=m?m.team1:'';
+  document.getElementById('mTeam2').value=m?m.team2:'';
+  document.getElementById('mScore1').value=m?m.score1:'';
+  document.getElementById('mScore2').value=m?m.score2:'';
+  document.getElementById('mResult').value=m?m.result:'';
+  document.getElementById('mWinner').value=m?m.winner:'';
+  document.getElementById('mTime').value=m?m.time:'';
+  openModal('matchModal');
+}
+function editMatch(id){openMatchModal(id)}
+
+function saveMatch(){
+  var obj={id:editingId||nextId++,tournament:document.getElementById('mTournament').value||'Match',team1:document.getElementById('mTeam1').value||'Team 1',team2:document.getElementById('mTeam2').value||'Team 2',score1:document.getElementById('mScore1').value||'—',score2:document.getElementById('mScore2').value||'—',result:document.getElementById('mResult').value||'Result TBD',winner:document.getElementById('mWinner').value||'',time:document.getElementById('mTime').value||''};
+  if(editingId){state.matches=state.matches.map(function(x){return x.id===editingId?obj:x})}else{state.matches.unshift(obj)}
+  closeModal('matchModal');renderMatches();save();
+}
+
+function openUpcomingModal(edit){
+  editingId=edit||null;
+  var m=edit?state.upcoming.find(function(x){return x.id===edit}):null;
+  document.getElementById('uTournament').value=m?m.tournament:'';
+  document.getElementById('uTeam1').value=m?m.team1:'';
+  document.getElementById('uTeam2').value=m?m.team2:'';
+  document.getElementById('uTime').value=m?m.time:'';
+  openModal('upcomingModal');
+}
+function editUpcoming(id){openUpcomingModal(id)}
+
+function saveUpcoming(){
+  var obj={id:editingId||nextId++,tournament:document.getElementById('uTournament').value||'Match',team1:document.getElementById('uTeam1').value||'Team 1',team2:document.getElementById('uTeam2').value||'Team 2',time:document.getElementById('uTime').value||''};
+  if(editingId){state.upcoming=state.upcoming.map(function(x){return x.id===editingId?obj:x})}else{state.upcoming.push(obj)}
+  closeModal('upcomingModal');renderUpcoming();save();
+}
+
+function openTournamentModal(edit){
+  editingId=edit||null;
+  var t=edit?state.tournaments.find(function(x){return x.id===edit}):null;
+  document.getElementById('tournamentModalTitle').textContent=edit?'Edit tournament':'Add tournament';
+  document.getElementById('tName').value=t?t.name:'';
+  document.getElementById('tMeta').value=t?t.meta:'';
+  document.getElementById('tFormat').value=t?t.format:'t20';
+  openModal('tournamentModal');
+}
+function editTournament(id){openTournamentModal(id)}
+
+function saveTournament(){
+  var obj={id:editingId||nextId++,name:document.getElementById('tName').value||'Tournament',meta:document.getElementById('tMeta').value||'',format:document.getElementById('tFormat').value};
+  if(editingId){state.tournaments=state.tournaments.map(function(x){return x.id===editingId?obj:x})}else{state.tournaments.push(obj)}
+  closeModal('tournamentModal');renderTournaments();save();
+}
+
+function openPlayerModal(edit){
+  editingId=edit||null;
+  var p=edit?state.players.find(function(x){return x.id===edit}):null;
+  document.getElementById('playerModalTitle').textContent=edit?'Edit player':'Add player';
+  currentPhoto=p?p.photo:null;
+  document.getElementById('pName').value=p?p.name:'';
+  document.getElementById('pCountry').value=p?p.country:'';
+  document.getElementById('pPlace').value=p?p.place:'';
+  document.getElementById('pRole').value=p?p.role:'bat';
+  document.getElementById('pRuns').value=p?p.runs:'';
+  document.getElementById('pSR').value=p?p.sr:'';
+  document.getElementById('pFours').value=p?p.fours:'';
+  document.getElementById('pSixes').value=p?p.sixes:'';
+  document.getElementById('pDots').value=p?p.dots:'';
+  document.getElementById('pCatches').value=p?p.catches:'';
+  document.getElementById('pRunOuts').value=p?p.runouts:'';
+  document.getElementById('pWickets').value=p?p.wickets:'';
+  document.getElementById('pOvers').value=p?p.overs:'';
+  document.getElementById('pEconomy').value=p?p.economy:'';
+  var prev=document.getElementById('photoPreview');
+  prev.innerHTML=currentPhoto?'<img src="'+currentPhoto+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">':"<svg width='28' height='28' viewBox='0 0 28 28' fill='none'><circle cx='14' cy='10' r='5' stroke='#475569' stroke-width='1.5'/><path d='M4 26c0-5.523 4.477-10 10-10s10 4.477 10 10' stroke='#475569' stroke-width='1.5' stroke-linecap='round'/></svg>";
+  openModal('playerModal');
+}
+
+function handlePhoto(input){
+  var file=input.files[0];if(!file)return;
+  var r=new FileReader();
+  r.onload=function(e){currentPhoto=e.target.result;document.getElementById('photoPreview').innerHTML='<img src="'+currentPhoto+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">'};
+  r.readAsDataURL(file);
+}
+
+function savePlayer(){
+  var name=document.getElementById('pName').value.trim();if(!name){document.getElementById('pName').focus();return}
+  var obj={id:editingId||nextId++,name:name,country:document.getElementById('pCountry').value.trim(),place:document.getElementById('pPlace').value.trim(),role:document.getElementById('pRole').value,photo:currentPhoto,runs:document.getElementById('pRuns').value||'0',sr:document.getElementById('pSR').value||'0',fours:document.getElementById('pFours').value||'0',sixes:document.getElementById('pSixes').value||'0',dots:document.getElementById('pDots').value||'0',catches:document.getElementById('pCatches').value||'0',runouts:document.getElementById('pRunOuts').value||'0',wickets:document.getElementById('pWickets').value||'0',overs:document.getElementById('pOvers').value||'0',economy:document.getElementById('pEconomy').value||'0'};
+  if(editingId){state.players=state.players.map(function(x){return x.id===editingId?obj:x})}else{state.players.push(obj)}
+  closeModal('playerModal');renderPlayers();renderAwards();save();
+}
+
+function editCurrentPlayer(){closeModal('playerDetailModal');openPlayerModal(editingId)}
+
+function viewPlayer(id){
+  editingId=id;
+  var p=state.players.find(function(x){return x.id===id});if(!p)return;
+  var ph=p.photo?'<img src="'+p.photo+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">':"<span style='font-family:Bebas Neue,sans-serif;font-size:26px;color:#475569'>"+getInitials(p.name)+"</span>";
+  var html='<div style="display:flex;align-items:center;gap:14px;margin-bottom:16px"><div style="width:72px;height:72px;border-radius:50%;overflow:hidden;background:#0f172a;border:2px solid #334155;flex-shrink:0;display:flex;align-items:center;justify-content:center">'+ph+'</div><div><div style="font-size:17px;font-weight:500;color:#e2e8f0">'+p.name+'</div><div style="font-size:12px;color:#64748b;margin-top:2px">'+p.country+(p.place?' · '+p.place:'')+'</div><span class="role-badge '+roleClasses[p.role]+'" style="display:inline-block;margin-top:5px">'+roleLabels[p.role]+'</span></div></div>';
+  html+='<div style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#64748b;margin-bottom:8px">Batting</div>';
+  html+='<div class="stats-grid-cards"><div class="sc"><div class="sc-val">'+p.runs+'</div><div class="sc-key">Runs</div></div><div class="sc"><div class="sc-val">'+p.fours+'</div><div class="sc-key">4s</div></div><div class="sc"><div class="sc-val">'+p.sixes+'</div><div class="sc-key">6s</div></div><div class="sc"><div class="sc-val">'+p.sr+'</div><div class="sc-key">SR</div></div><div class="sc"><div class="sc-val">'+p.dots+'</div><div class="sc-key">Dots</div></div><div class="sc"><div class="sc-val">'+p.catches+'</div><div class="sc-key">Catches</div></div></div>';
+  html+='<div style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#64748b;margin:14px 0 8px">Bowling</div>';
+  html+='<div class="stats-grid-cards"><div class="sc"><div class="sc-val">'+p.wickets+'</div><div class="sc-key">Wickets</div></div><div class="sc"><div class="sc-val">'+p.overs+'</div><div class="sc-key">Overs</div></div><div class="sc"><div class="sc-val">'+p.economy+'</div><div class="sc-key">Economy</div></div><div class="sc"><div class="sc-val">'+p.runouts+'</div><div class="sc-key">Run outs</div></div></div>';
+  document.getElementById('playerDetailContent').innerHTML=html;
+  openModal('playerDetailModal');
+}
+
+function openAwardPicker(type){
+  currentAwardType=type;
+  document.getElementById('awardPickerTitle').textContent=type==='motm'?'Man of the match':'Man of the series';
+  if(!state.players.length){document.getElementById('awardPickerGrid').innerHTML='<div style="font-size:13px;color:#64748b;padding:12px 0">No players yet. Add players first.</div>';openModal('awardPickerModal');return;}
+  document.getElementById('awardPickerGrid').innerHTML=state.players.map(function(p){
+    var sel=(type==='motm'&&state.motm===p.id)||(type==='mots'&&state.mots===p.id)?' sel':'';
+    var ph=p.photo?'<img src="'+p.photo+'">':"<span style='font-family:Bebas Neue,sans-serif;font-size:15px;color:#475569'>"+getInitials(p.name)+"</span>";
+    return '<div class="award-picker-card'+sel+'" onclick="selectAward('+p.id+')"><div class="award-picker-photo">'+ph+'</div><div class="award-picker-name">'+p.name+'</div></div>'
+  }).join('');
+  openModal('awardPickerModal');
+}
+
+function selectAward(id){
+  if(currentAwardType==='motm') state.motm=id;
+  else state.mots=id;
+  closeModal('awardPickerModal');
+  renderAwards();save();
+}
+
+init();
+</script>
+</body>
+</html>
